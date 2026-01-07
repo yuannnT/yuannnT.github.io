@@ -2,134 +2,174 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>狗狗測驗</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你適合養什麼狗狗？（真實圖片版）</title>
 <style>
 :root{
-  --bg:#ffeef7;
+  --bg:#fff0f5;
   --card:#ffffff;
   --accent:#ff69b4;
-  --border:#ffb6c1;
+  --border:#ffd6eb;
   --text:#333;
+  --muted:#888;
 }
+*{box-sizing:border-box;}
 body{
   margin:0;
-  font-family:"Noto Sans TC",sans-serif;
+  font-family:"Noto Sans TC",system-ui;
   background:var(--bg);
   color:var(--text);
 }
 header{
+  padding:24px 16px;
   text-align:center;
-  padding:24px 0;
 }
-.wrap{max-width:700px;margin:auto;padding:16px;}
+.wrap{max-width:600px;margin:0 auto;padding:16px;}
+.quiz{max-width:600px;margin:0 auto;}
 .q{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:12px;
-  padding:16px;
-  margin-bottom:16px;
+  padding:20px;
+  margin-bottom:12px;
 }
-.answers{display:flex;flex-direction:column;gap:10px;}
+.answers{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
 .answer{
   border:1px solid var(--border);
   border-radius:10px;
   padding:10px;
   cursor:pointer;
-  background:#fff;
   text-align:center;
+  background:#fff;
+  transition:0.2s;
 }
-.answer:hover{background:#ffe0f0;}
+.answer:hover{background:var(--bg);}
+.answer.selected{
+  border-color:var(--accent);
+  background:#ffe0f0;
+}
 .result{
+  text-align:center;
   background:var(--card);
   border:1px solid var(--border);
   border-radius:12px;
   padding:20px;
-  text-align:center;
-}
-.result .emoji{
-  font-size:100px;
-  margin-bottom:12px;
 }
 button{
   margin-top:16px;
-  padding:10px 14px;
-  border:none;
+  padding:10px 16px;
   border-radius:10px;
+  border:none;
   background:var(--accent);
-  color:white;
+  color:#fff;
   cursor:pointer;
-  font-size:16px;
 }
-button:hover{
-  background:#ff85c1;
+img.result-img{
+  width:250px;
+  margin-top:16px;
+  border-radius:12px;
 }
 </style>
 </head>
 <body>
-
 <header>
-  <h1>你適合養哪種狗狗？</h1>
-  <p>回答八個問題，即可找到你的狗狗類型！</p>
+  <h1>你適合養什麼狗狗？</h1>
+  <p style="color:var(--muted)">回答以下問題，看看你的理想狗狗是什麼！</p>
 </header>
-
-<div class="wrap">
-  <div id="quiz"></div>
-</div>
+<main class="wrap">
+<section id="quiz" class="page active">
+  <div id="root" class="quiz"></div>
+</section>
+</main>
 
 <script>
 const questions=[
-{q:"1. 你理想的狗狗精力程度？",a:["超活潑","中等","偶爾玩","黏人"]},
-{q:"2. 你的居住空間？",a:["大房子","中型","小房間","套房"]},
-{q:"3. 你每天能陪多久？",a:["3 小時以上","1-3 小時","少於 1 小時","幾乎不陪"]},
-{q:"4. 你喜歡的體型？",a:["大型","中型","小型","極小"]},
-{q:"5. 掉毛程度能接受？",a:["無所謂","一點可","少掉毛","不能掉毛"]},
-{q:"6. 最喜歡的性格？",a:["活潑","親人","有個性","可愛"]},
-{q:"7. 第一次養狗？",a:["不是","是","想要好訓練","不確定"]},
-{q:"8. 希望狗狗互動需求？",a:["高互動","中等","偶爾","獨立"]}
+  ['假日你最想怎麼過？',['宅在家享受悠閒','和朋友小聚','戶外探險','做新挑戰']],
+  ['遇到困難時你通常？',['慢慢思考','尋求朋友幫忙','觀察再行動','立刻嘗試']],
+  ['你喜歡的生活空間？',['安靜小屋','溫馨公寓','寬敞庭院','開放大空間']],
+  ['朋友怎麼形容你？',['溫柔內斂','親切可靠','活潑好動','勇敢好勝']],
+  ['陪伴時你偏好？',['安靜陪伴','日常互動','一起玩耍','熱情挑戰']],
+  ['理想的狗狗是？',['小巧可愛、黏人','溫暖友善','活力十足','獨立自主、挑戰性高']]
 ];
 
-let scores=[0,0,0,0,0];
-let current=0;
+const results={
+  'A':{
+    name:'小靜心',
+    desc:'你適合溫柔安靜的小型伴侶犬。',
+    breeds:['西施犬','巴哥犬','法國鬥牛犬'],
+    img:'https://pxhere.com/en/photo/526213'  // 公共領域狗圖片示例 :contentReference[oaicite:1]{index=1}
+  },
+  'B':{
+    name:'小溫暖',
+    desc:'你適合友善、日常互動型的狗狗。',
+    breeds:['可卡犬','柯基犬','馬爾濟斯'],
+    img:'https://pxhere.com/en/photo/877763'  // 公共領域狗圖片示例 :contentReference[oaicite:2]{index=2}
+  },
+  'C':{
+    name:'小探險家',
+    desc:'你適合活潑好動、喜愛戶外活動的狗狗。',
+    breeds:['黃金獵犬','拉布拉多','邊境牧羊犬'],
+    img:'https://pxhere.com/en/photo/103093'  // 公共領域狗圖片示例 :contentReference[oaicite:3]{index=3}
+  },
+  'D':{
+    name:'小自由',
+    desc:'你適合獨立、精力旺盛的狗狗。',
+    breeds:['哈士奇','澳洲牧羊犬','活力型米克斯'],
+    img:'https://pxhere.com/en/photo/1349702'  // 公共領域狗圖片示例 :contentReference[oaicite:4]{index=4}
+  }
+};
 
-const dogData=[
-{name:"活潑運動型（哈士奇）",desc:"精力旺盛、喜歡冒險。",emoji:"🐶"},
-{name:"溫柔家庭型（黃金獵犬）",desc:"親切溫和、家庭好夥伴。",emoji:"🦮"},
-{name:"獨立個性型（柴犬）",desc:"個性獨立、有主見。",emoji:"🐕‍🦺"},
-{name:"可愛膝上型（博美）",desc:"小巧可愛、喜歡撒嬌。",emoji:"🐩"},
-{name:"聰明訓練型（德國牧羊犬）",desc:"高智商、容易訓練。",emoji:"🐕"}
-];
+let index=0;
+let answers=[];
 
-function showQuestion(){
-  const qBox=document.getElementById("quiz");
-  if(current>=questions.length){showResult();return;}
-  let html=`<div class="q"><div>${questions[current].q}</div><div class="answers">`;
-  questions[current].a.forEach((ans,i)=>{
-    html+=`<div class="answer" onclick="answer(${i})">${ans}</div>`;
+const root=document.getElementById('root');
+
+function renderQuestion(){
+  root.innerHTML='';
+  const q=questions[index];
+  const box=document.createElement('div');
+  box.className='q';
+  box.innerHTML=`<div>${index+1}. ${q[0]}</div>`;
+  const a=document.createElement('div');
+  a.className='answers';
+  q[1].forEach((t,i)=>{
+    const o=document.createElement('div');
+    o.className='answer';
+    o.textContent=t;
+    const letter = ['A','B','C','D'][i];
+    o.onclick=()=>{
+      answers.push(letter);
+      index++;
+      if(index<questions.length){
+        renderQuestion();
+      }else{
+        showResult();
+      }
+    };
+    a.appendChild(o);
   });
-  html+="</div></div>";
-  qBox.innerHTML=html;
-}
-
-function answer(i){
-  scores[i%5]++; // 簡單分法
-  current++;
-  showQuestion();
+  box.appendChild(a);
+  root.appendChild(box);
 }
 
 function showResult(){
-  const idx=scores.indexOf(Math.max(...scores));
-  const r=dogData[idx];
-  document.getElementById("quiz").innerHTML=
-    `<div class="result">
-      <div class="emoji">${r.emoji}</div>
-      <h2>${r.name}</h2>
-      <p>${r.desc}</p>
-      <button onclick="location.reload()">再測一次</button>
-     </div>`;
+  const counts = answers.reduce((map,v)=>{
+    map[v] = (map[v] || 0)+1;
+    return map;
+  },{});
+  const maxKey = Object.keys(counts).reduce((a,b)=>counts[a]>=counts[b]?a:b);
+  const r = results[maxKey];
+  
+  root.innerHTML=`<div class="result">
+    <h2>你的狗狗類型：${r.name}</h2>
+    <p>${r.desc}</p>
+    <p>建議品種：${r.breeds.join('、')}</p>
+    <img class="result-img" src="${r.img}" alt="${r.name}">
+    <br><button onclick="location.reload()">重新測試</button>
+  </div>`;
 }
 
-showQuestion();
+renderQuestion();
 </script>
-
 </body>
 </html>
