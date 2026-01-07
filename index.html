@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>你適合養什麼狗狗？（真實圖片版）</title>
+<title>你適合養什麼狗狗？（多圖結果版）</title>
 <style>
 :root{
   --bg:#fff0f5;
@@ -44,10 +44,6 @@ header{
   transition:0.2s;
 }
 .answer:hover{background:var(--bg);}
-.answer.selected{
-  border-color:var(--accent);
-  background:#ffe0f0;
-}
 .result{
   text-align:center;
   background:var(--card);
@@ -65,25 +61,28 @@ button{
   cursor:pointer;
 }
 img.result-img{
-  width:250px;
-  margin-top:16px;
+  width:140px;
+  margin:10px;
   border-radius:12px;
 }
 </style>
 </head>
 <body>
+
 <header>
   <h1>你適合養什麼狗狗？</h1>
   <p style="color:var(--muted)">回答以下問題，看看你的理想狗狗是什麼！</p>
 </header>
 <main class="wrap">
-<section id="quiz" class="page active">
+<section id="quiz">
   <div id="root" class="quiz"></div>
 </section>
 </main>
 
 <script>
-const questions=[
+
+// 題目設定
+const questions = [
   ['假日你最想怎麼過？',['宅在家享受悠閒','和朋友小聚','戶外探險','做新挑戰']],
   ['遇到困難時你通常？',['慢慢思考','尋求朋友幫忙','觀察再行動','立刻嘗試']],
   ['你喜歡的生活空間？',['安靜小屋','溫馨公寓','寬敞庭院','開放大空間']],
@@ -92,57 +91,99 @@ const questions=[
   ['理想的狗狗是？',['小巧可愛、黏人','溫暖友善','活力十足','獨立自主、挑戰性高']]
 ];
 
-const results={
+// 結果資料：品種 + 多張圖片（示範 Pixabay 免費照片來源）
+const results = {
   'A':{
     name:'小靜心',
-    desc:'你適合溫柔安靜的小型伴侶犬。',
-    breeds:['西施犬','巴哥犬','法國鬥牛犬'],
-    img:'https://pxhere.com/en/photo/526213'  // 公共領域狗圖片示例 :contentReference[oaicite:1]{index=1}
+    desc:'你適合安靜、溫柔陪伴型的小型狗狗。',
+    breeds:[
+      {name:'西施犬', images:[
+        'https://cdn.pixabay.com/photo/2016/02/19/10/00/dog-1207816_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/09/25/13/12/shih-tzu-2785076_1280.jpg'
+      ]},
+      {name:'巴哥犬', images:[
+        'https://cdn.pixabay.com/photo/2018/09/05/09/51/pug-3652136_1280.jpg'
+      ]},
+      {name:'法國鬥牛犬', images:[
+        'https://cdn.pixabay.com/photo/2018/03/08/12/06/french-bulldog-3208917_1280.jpg'
+      ]}
+    ]
   },
   'B':{
     name:'小溫暖',
     desc:'你適合友善、日常互動型的狗狗。',
-    breeds:['可卡犬','柯基犬','馬爾濟斯'],
-    img:'https://pxhere.com/en/photo/877763'  // 公共領域狗圖片示例 :contentReference[oaicite:2]{index=2}
+    breeds:[
+      {name:'柯基犬', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/12/corgi-2785075_1280.jpg',
+        'https://cdn.pixabay.com/photo/2019/12/03/23/25/welsh-corgi-4675265_1280.jpg'
+      ]},
+      {name:'可卡犬', images:[
+        'https://cdn.pixabay.com/photo/2018/06/11/15/11/american-cocker-spaniel-3475924_1280.jpg'
+      ]},
+      {name:'馬爾濟斯', images:[
+        'https://cdn.pixabay.com/photo/2019/01/04/14/19/maltese-3911093_1280.jpg'
+      ]}
+    ]
   },
   'C':{
     name:'小探險家',
-    desc:'你適合活潑好動、喜愛戶外活動的狗狗。',
-    breeds:['黃金獵犬','拉布拉多','邊境牧羊犬'],
-    img:'https://pxhere.com/en/photo/103093'  // 公共領域狗圖片示例 :contentReference[oaicite:3]{index=3}
+    desc:'你適合活潑好動、喜歡戶外的狗狗。',
+    breeds:[
+      {name:'黃金獵犬', images:[
+        'https://cdn.pixabay.com/photo/2015/03/26/09/41/golden-retriever-690176_1280.jpg',
+        'https://cdn.pixabay.com/photo/2016/02/10/17/48/golden-retriever-1195785_1280.jpg'
+      ]},
+      {name:'拉布拉多', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/11/labrador-2785074_1280.jpg'
+      ]},
+      {name:'邊境牧羊犬', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/12/border-collie-2785077_1280.jpg'
+      ]}
+    ]
   },
   'D':{
     name:'小自由',
     desc:'你適合獨立、精力旺盛的狗狗。',
-    breeds:['哈士奇','澳洲牧羊犬','活力型米克斯'],
-    img:'https://pxhere.com/en/photo/1349702'  // 公共領域狗圖片示例 :contentReference[oaicite:4]{index=4}
+    breeds:[
+      {name:'哈士奇', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/11/siberian-husky-2785073_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/09/25/13/11/husky-2785072_1280.jpg'
+      ]},
+      {name:'澳洲牧羊犬', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/12/australian-shepherd-2785078_1280.jpg'
+      ]},
+      {name:'活力型米克斯', images:[
+        'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785079_1280.jpg'
+      ]}
+    ]
   }
 };
 
-let index=0;
-let answers=[];
+let index = 0;
+let answers = [];
 
-const root=document.getElementById('root');
+const root = document.getElementById('root');
 
+// 顯示題目
 function renderQuestion(){
-  root.innerHTML='';
-  const q=questions[index];
-  const box=document.createElement('div');
-  box.className='q';
-  box.innerHTML=`<div>${index+1}. ${q[0]}</div>`;
-  const a=document.createElement('div');
-  a.className='answers';
+  root.innerHTML = '';
+  const q = questions[index];
+  const box = document.createElement('div');
+  box.className = 'q';
+  box.innerHTML = `<div>${index+1}. ${q[0]}</div>`;
+  const a = document.createElement('div');
+  a.className = 'answers';
   q[1].forEach((t,i)=>{
-    const o=document.createElement('div');
-    o.className='answer';
-    o.textContent=t;
+    const o = document.createElement('div');
+    o.className = 'answer';
+    o.textContent = t;
     const letter = ['A','B','C','D'][i];
-    o.onclick=()=>{
+    o.onclick = ()=>{
       answers.push(letter);
       index++;
-      if(index<questions.length){
+      if(index < questions.length){
         renderQuestion();
-      }else{
+      } else {
         showResult();
       }
     };
@@ -152,24 +193,35 @@ function renderQuestion(){
   root.appendChild(box);
 }
 
+// 顯示結果 + 多張狗狗照片
 function showResult(){
   const counts = answers.reduce((map,v)=>{
-    map[v] = (map[v] || 0)+1;
+    map[v] = (map[v]||0) + 1;
     return map;
-  },{});
+  }, {});
   const maxKey = Object.keys(counts).reduce((a,b)=>counts[a]>=counts[b]?a:b);
   const r = results[maxKey];
-  
-  root.innerHTML=`<div class="result">
+
+  let html = `<div class="result">
     <h2>你的狗狗類型：${r.name}</h2>
     <p>${r.desc}</p>
-    <p>建議品種：${r.breeds.join('、')}</p>
-    <img class="result-img" src="${r.img}" alt="${r.name}">
-    <br><button onclick="location.reload()">重新測試</button>
-  </div>`;
+    <div style="font-weight:bold; margin-top:10px;">建議品種：</div>`;
+
+  // 每個品種名稱 + 照片迴圈
+  r.breeds.forEach(breed=>{
+    html += `<div style="margin-top:12px;"><span style="font-size:18px;">${breed.name}</span><br>`;
+    breed.images.forEach(imgUrl => {
+      html += `<img class="result-img" src="${imgUrl}" alt="${breed.name}">`;
+    });
+    html += `</div>`;
+  });
+
+  html += `<br><button onclick="location.reload()">重新測試</button></div>`;
+  root.innerHTML = html;
 }
 
 renderQuestion();
+
 </script>
 </body>
 </html>
