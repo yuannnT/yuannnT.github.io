@@ -6,7 +6,6 @@
 <title>你適合哪種類型的狗狗？</title>
 
 <style>
-/* ---------- 基本色彩（亮色模式） ---------- */
 :root {
   --bg: #f5f6fa;
   --text: #222;
@@ -15,13 +14,12 @@
   --border: #e0e0e0;
 }
 
-/* ---------- 深色模式 ---------- */
 .dark-mode {
   --bg: #1a1a1a;
   --text: #f0f0f0;
   --card: #2a2a2a;
   --accent: #8f88ff;
-  --border: #444444;
+  --border: #444;
 }
 
 body {
@@ -54,9 +52,7 @@ button {
   transition: 0.2s;
 }
 
-button:hover {
-  opacity: 0.9;
-}
+button:hover { opacity: 0.9; }
 
 .container {
   max-width: 720px;
@@ -64,7 +60,6 @@ button:hover {
   padding: 20px;
 }
 
-/* 卡片 */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -74,7 +69,6 @@ button:hover {
   box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
-/* 初始頁面分類格線 */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -88,9 +82,9 @@ button:hover {
   border-radius: 10px;
   background: var(--card);
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
-/* Carousel */
 .carousel-container {
   position: relative;
   width: 100%;
@@ -104,10 +98,22 @@ button:hover {
   transition: transform 0.35s ease;
 }
 
-.carousel-image {
+.carousel-item {
   min-width: 100%;
+  text-align: center;
+}
+
+.carousel-image {
+  width: 100%;
   height: 260px;
   object-fit: cover;
+  border-radius: 10px;
+}
+
+.carousel-label {
+  margin-top: 6px;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .carousel-btn {
@@ -127,6 +133,7 @@ button:hover {
 
 .hidden { display: none; }
 
+.breed-list { margin-top: 12px; font-weight: bold; }
 </style>
 </head>
 
@@ -139,7 +146,7 @@ button:hover {
 
 <div class="container">
 
-  <!-- ----------- 初始首頁 ----------- -->
+  <!-- 初始首頁 -->
   <div id="startPage" class="card">
     <h2>開始你的寵物適配測驗</h2>
     <p>透過簡單問題，找出最符合你生活方式的狗狗類型。</p>
@@ -149,35 +156,36 @@ button:hover {
     <div class="grid">
       <div class="type-box">
         <strong>活力運動型</strong>
-        <p>高度活動量、喜歡跑跳，需要較多時間陪伴。</p>
+        <p>喜歡跑跳，活動量高，適合喜歡運動的人。</p>
       </div>
       <div class="type-box">
         <strong>親人溫和型</strong>
-        <p>性格溫和、樂於互動，適合家庭與陪伴需求高的人。</p>
+        <p>溫和親人，喜歡互動，適合需要陪伴的人。</p>
       </div>
       <div class="type-box">
         <strong>安靜獨立型</strong>
-        <p>不黏人、低活動量，適合生活較忙碌的人。</p>
+        <p>安靜、不黏人，適合生活忙碌的人。</p>
       </div>
       <div class="type-box">
         <strong>穩定中庸型</strong>
-        <p>平衡、易適應環境，照顧需求不算高也不算低。</p>
+        <p>性格平衡，適應力高，照顧需求中等。</p>
       </div>
     </div>
 
     <button style="margin-top:24px;" onclick="startTest()">開始測驗</button>
   </div>
 
-  <!-- ----------- 題目頁 ----------- -->
+  <!-- 題目頁 -->
   <div id="questionPage" class="card hidden">
     <h3 id="questionText"></h3>
     <div id="options"></div>
   </div>
 
-  <!-- ----------- 結果頁 ----------- -->
+  <!-- 結果頁 -->
   <div id="resultPage" class="card hidden">
     <h2 id="resultTitle"></h2>
     <p id="resultDesc"></p>
+    <div id="breedNames" class="breed-list"></div>
 
     <div class="carousel-container">
       <div id="carouselTrack" class="carousel-track"></div>
@@ -190,19 +198,17 @@ button:hover {
 
 </div>
 
-
 <script>
-/* -------- 深色模式切換 -------- */
+/* 深色模式切換 */
 document.getElementById("modeToggle").onclick = () => {
   document.body.classList.toggle("dark-mode");
   document.getElementById("modeToggle").textContent =
     document.body.classList.contains("dark-mode") ? "亮色模式" : "深色模式";
 };
 
-/* -------- 題目資料 -------- */
+/* 題目資料 */
 const questions = [
-  {
-    text: "你的生活步調最接近？",
+  { text: "你的生活步調最接近？",
     options: [
       { text: "非常活躍", type: "active" },
       { text: "適中穩定", type: "balanced" },
@@ -210,8 +216,7 @@ const questions = [
       { text: "親和、偏向陪伴型", type: "gentle" }
     ]
   },
-  {
-    text: "你每天能提供的陪伴時間？",
+  { text: "你每天能提供的陪伴時間？",
     options: [
       { text: "超過 3–4 小時", type: "gentle" },
       { text: "2 小時左右", type: "balanced" },
@@ -219,8 +224,7 @@ const questions = [
       { text: "願意安排額外運動時間", type: "active" }
     ]
   },
-  {
-    text: "你偏好狗狗的性格？",
+  { text: "你偏好狗狗的性格？",
     options: [
       { text: "聰明好動，願意訓練", type: "active" },
       { text: "溫和親人，適合互動", type: "gentle" },
@@ -230,49 +234,84 @@ const questions = [
   }
 ];
 
-/* -------- 結果資料 -------- */
+/* 結果資料 */
 const results = {
   active: {
     title: "活力運動型狗狗",
-    desc: "需要大量運動與戶外活動的類型，適合生活節奏快、喜歡運動的人。",
-    images: [
-      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d",
-      "https://images.unsplash.com/photo-1507149833265-60c372daea22",
-      "https://images.unsplash.com/photo-1503327431567-3ab5e6e79140"
+    desc: "需要大量運動與戶外活動，適合喜歡運動的人。",
+    breeds: [
+      {name: "黃金獵犬", images:[
+        "https://cdn.pixabay.com/photo/2015/03/26/09/41/golden-retriever-690176_1280.jpg",
+        "https://cdn.pixabay.com/photo/2016/02/10/17/48/golden-retriever-1195785_1280.jpg"
+      ]},
+      {name: "拉布拉多", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/11/labrador-2785074_1280.jpg",
+        "https://cdn.pixabay.com/photo/2018/06/22/21/06/labrador-3499919_1280.jpg"
+      ]},
+      {name: "邊境牧羊犬", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/border-collie-2785077_1280.jpg",
+        "https://cdn.pixabay.com/photo/2015/02/23/22/44/border-collie-646353_1280.jpg"
+      ]}
     ]
   },
   gentle: {
     title: "親人溫和型狗狗",
-    desc: "親和力高、容易與人建立感情，非常適合需要陪伴感的飼主。",
-    images: [
-      "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
-      "https://images.unsplash.com/photo-1601758125946-6ec2b3e0b4c1",
-      "https://images.unsplash.com/photo-1517849845537-4d257902454a"
+    desc: "親和力高、容易建立感情，適合需要陪伴的人。",
+    breeds: [
+      {name:"柯基", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/corgi-2785075_1280.jpg",
+        "https://cdn.pixabay.com/photo/2019/12/03/23/25/welsh-corgi-4675265_1280.jpg"
+      ]},
+      {name:"可卡犬", images:[
+        "https://cdn.pixabay.com/photo/2018/06/11/15/11/american-cocker-spaniel-3475924_1280.jpg",
+        "https://cdn.pixabay.com/photo/2017/08/02/14/25/cocker-2582031_1280.jpg"
+      ]},
+      {name:"馬爾濟斯", images:[
+        "https://cdn.pixabay.com/photo/2019/01/04/14/19/maltese-3911093_1280.jpg",
+        "https://cdn.pixabay.com/photo/2018/03/27/19/42/maltese-3266201_1280.jpg"
+      ]}
     ]
   },
   quiet: {
     title: "安靜獨立型狗狗",
-    desc: "照顧需求較低，不黏人、不常吠叫，適合忙碌且喜歡安靜的人。",
-    images: [
-      "https://images.unsplash.com/photo-1508674861872-a51e06c50c9b",
-      "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9"
+    desc: "照顧需求低，不黏人、安靜，適合忙碌的人。",
+    breeds: [
+      {name:"西施犬", images:[
+        "https://cdn.pixabay.com/photo/2016/02/19/10/00/dog-1207816_1280.jpg",
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/shih-tzu-2785076_1280.jpg"
+      ]},
+      {name:"法國鬥牛犬", images:[
+        "https://cdn.pixabay.com/photo/2018/03/08/12/06/french-bulldog-3208917_1280.jpg",
+        "https://cdn.pixabay.com/photo/2018/11/18/20/57/french-bulldog-3823386_1280.jpg"
+      ]},
+      {name:"巴哥犬", images:[
+        "https://cdn.pixabay.com/photo/2018/09/05/09/51/pug-3652136_1280.jpg",
+        "https://cdn.pixabay.com/photo/2018/02/22/20/00/pug-3174559_1280.jpg"
+      ]}
     ]
   },
   balanced: {
     title: "穩定中庸型狗狗",
-    desc: "活動量與性格均衡，適應性高，照顧需求不會過於極端。",
-    images: [
-      "https://images.unsplash.com/photo-1552053831-71594a27632d",
-      "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
-      "https://images.unsplash.com/photo-1506346203053-7d911f19f1d7"
+    desc: "活動量與性格均衡，適應力高。",
+    breeds: [
+      {name:"柴犬", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/shiba-inu-2785080_1280.jpg",
+        "https://cdn.pixabay.com/photo/2018/05/08/20/39/shiba-3386044_1280.jpg"
+      ]},
+      {name:"比熊", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/bichon-frise-2785081_1280.jpg",
+        "https://cdn.pixabay.com/photo/2019/03/11/08/06/bichon-frise-4049567_1280.jpg"
+      ]},
+      {name:"史賓格犬", images:[
+        "https://cdn.pixabay.com/photo/2017/09/25/13/12/springer-spaniel-2785082_1280.jpg",
+        "https://cdn.pixabay.com/photo/2016/02/18/18/33/springer-spaniel-1209287_1280.jpg"
+      ]}
     ]
   }
 };
 
-/* -------- 測驗流程控制 -------- */
 let index = 0;
-let scores = { active: 0, gentle: 0, quiet: 0, balanced: 0 };
+let scores = { active:0, gentle:0, quiet:0, balanced:0 };
 
 /* 開始測驗 */
 function startTest() {
@@ -284,10 +323,8 @@ function startTest() {
 function loadQuestion() {
   const q = questions[index];
   document.getElementById("questionText").textContent = q.text;
-
   const optDiv = document.getElementById("options");
   optDiv.innerHTML = "";
-
   q.options.forEach(o => {
     const btn = document.createElement("button");
     btn.textContent = o.text;
@@ -301,74 +338,90 @@ function loadQuestion() {
 function choose(type) {
   scores[type]++;
   index++;
-  if (index >= questions.length) showResult();
+  if(index >= questions.length) showResult();
   else loadQuestion();
 }
 
-/* -------- 顯示結果 -------- */
+/* 結果頁 Carousel */
 let currentImg = 0;
+let imageList = [];
 
 function showResult() {
   document.getElementById("questionPage").classList.add("hidden");
   document.getElementById("resultPage").classList.remove("hidden");
 
-  const finalType = Object.keys(scores).reduce((a, b) => 
-    scores[a] > scores[b] ? a : b
-  );
-
+  const finalType = Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
   const r = results[finalType];
 
   document.getElementById("resultTitle").textContent = r.title;
   document.getElementById("resultDesc").textContent = r.desc;
 
+  // 列出品種名稱
+  const breedNames = r.breeds.map(b => b.name).join("、");
+  document.getElementById("breedNames").textContent = "品種：" + breedNames;
+
+  // Carousel 圖片
   const track = document.getElementById("carouselTrack");
   track.innerHTML = "";
-  currentImg = 0;
+  imageList = [];
 
-  r.images.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    img.className = "carousel-image";
-    track.appendChild(img);
+  let addedImgs = new Set(); // 避免重複
+
+  r.breeds.forEach(breed=>{
+    breed.images.forEach(imgUrl=>{
+      if(!addedImgs.has(imgUrl)){
+        const item = document.createElement("div");
+        item.className="carousel-item";
+
+        const img = document.createElement("img");
+        img.src=imgUrl;
+        img.className="carousel-image";
+
+        const label = document.createElement("div");
+        label.className="carousel-label";
+        label.textContent=breed.name;
+
+        item.appendChild(img);
+        item.appendChild(label);
+        track.appendChild(item);
+        imageList.push(item);
+
+        addedImgs.add(imgUrl);
+      }
+    });
   });
+
+  currentImg = 0;
+  updateCarousel();
 }
 
-/* -------- Carousel 操作 -------- */
 function updateCarousel() {
   const track = document.getElementById("carouselTrack");
-  track.style.transform = `translateX(-${currentImg * 100}%)`;
+  track.style.transform = `translateX(-${currentImg*100}%)`;
 }
 
 function prevImg() {
-  const finalType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  const max = results[finalType].images.length;
-  currentImg = (currentImg - 1 + max) % max;
+  currentImg = (currentImg - 1 + imageList.length) % imageList.length;
   updateCarousel();
 }
 
 function nextImg() {
-  const finalType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  const max = results[finalType].images.length;
-  currentImg = (currentImg + 1) % max;
+  currentImg = (currentImg + 1) % imageList.length;
   updateCarousel();
 }
 
-/* -------- 手機左右滑動 -------- */
+/* 手機滑動 */
 let startX = 0;
-document.getElementById("carouselTrack").addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
-document.getElementById("carouselTrack").addEventListener("touchend", e => {
+document.getElementById("carouselTrack").addEventListener("touchstart", e=>{ startX=e.touches[0].clientX; });
+document.getElementById("carouselTrack").addEventListener("touchend", e=>{
   let endX = e.changedTouches[0].clientX;
-  if (endX - startX > 50) prevImg();
-  if (startX - endX > 50) nextImg();
+  if(endX-startX>50) prevImg();
+  if(startX-endX>50) nextImg();
 });
 
-/* -------- 重新開始 -------- */
 function restart() {
   index = 0;
-  scores = { active: 0, gentle: 0, quiet: 0, balanced: 0 };
+  scores = { active:0, gentle:0, quiet:0, balanced:0 };
   document.getElementById("resultPage").classList.add("hidden");
   document.getElementById("startPage").classList.remove("hidden");
 }
@@ -376,5 +429,7 @@ function restart() {
 
 </body>
 </html>
+
+
 
    
